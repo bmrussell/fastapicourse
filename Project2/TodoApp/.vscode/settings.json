@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:TodoApp}/todosapp.db",
+            "group": "fastapi",
+            "name": "todos"
+        }
+    ]
+}
