@@ -17,6 +17,9 @@ router = APIRouter(prefix='/auth', tags=['auth'])
 SECRET_KEY = '00646eac-4362-41e8-a80f-a027b07c71a0'
 ALGORITHM = 'HS256'
 
+# pip install bcrypt==4.0.1
+# version of bcrypt important 
+# for  pip install "python-jose[cryptography]"
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token') # parameter is the url that the client will send to the app
 

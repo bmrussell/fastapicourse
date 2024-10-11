@@ -33,6 +33,7 @@ class CreateUserRequest(BaseModel):
     last_name: str
     password: str
     role: str
+    phone_number: str
 
 class UserProfile():
     id: int
@@ -42,6 +43,7 @@ class UserProfile():
     last_name: str
     password: str
     role: str
+    phone_number: str
     is_active: bool
 
 class UpdateUserRequest(BaseModel):
@@ -52,6 +54,7 @@ class UpdateUserRequest(BaseModel):
     old_password: str = Field(None, min_length=3)
     password: str = Field(None, min_length=3)
     role: str = Field(None, min_length=3)
+    phone_number: str = Field(None, min_length=3)
     is_active: bool = Field(None)
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
@@ -96,6 +99,7 @@ async def get_user_profile(user: user_dependency,  db: db_dependency, user_id: i
     profile.first_name = profile_model.first_name
     profile.last_name = profile_model.last_name
     profile.role = profile_model.role
+    profile.phone_number = profile_model.phone_number
     profile.email = profile_model.email
     profile.is_active = profile_model.is_active
     
@@ -130,7 +134,8 @@ async def update_user(user: user_dependency, db: db_dependency, updated_user: Up
 
     if updated_user.first_name is not None: user_model.first_name = updated_user.first_name
     if updated_user.last_name is not None: user_model.last_name = updated_user.last_name
-    if updated_user.email is not None: user_model.first_name = updated_user.email
+    if updated_user.email is not None: user_model.email = updated_user.email
+    if updated_user.phone_number is not None: user_model.phone_number = updated_user.phone_number
     
     if user_model.role != "admin":
         if updated_user.role is not None or updated_user.is_active is not None:
