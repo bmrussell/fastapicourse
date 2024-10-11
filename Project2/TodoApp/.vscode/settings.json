@@ -6,6 +6,28 @@
             "database": "${workspaceFolder:TodoApp}/todosapp.db",
             "group": "fastapi",
             "name": "todos"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "postgres admin",
+            "group": "postgres",
+            "username": "postgres",
+            "password": "adminadmin",
+            "database": "postgres"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "tododb",
+            "group": "postgres",
+            "database": "todo-db",
+            "username": "postgres",
+            "password": "adminadmin"
         }
     ]
 }
