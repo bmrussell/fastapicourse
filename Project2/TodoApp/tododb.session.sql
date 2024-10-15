@@ -1,6 +1,8 @@
-# Postgresql
+-- Postgresql
+
 
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS todos;
 
 CREATE TABLE users (
   id SERIAL,
@@ -14,8 +16,6 @@ CREATE TABLE users (
   PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS todos;
-
 CREATE TABLE todos (
   id SERIAL,
   title varchar(200) DEFAULT NULL,
@@ -26,3 +26,4 @@ CREATE TABLE todos (
   PRIMARY KEY (id),
   FOREIGN KEY (owner_id) REFERENCES users(id)
 );
+
