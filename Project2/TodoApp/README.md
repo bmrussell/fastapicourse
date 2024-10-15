@@ -56,3 +56,10 @@ ID_FROM_VERSION_
 alembic upgrade 9f61e5cc11d1
 ```
 ### 
+
+
+
+## Testing
+
+pytest will run all functions with "test" in the name in files with "test" in the name
+
