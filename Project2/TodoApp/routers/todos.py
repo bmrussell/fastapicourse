@@ -63,7 +63,16 @@ async def create_todo(user: user_dependency, db: db_dependency, todo_request: To
     todo_model = Todos(**todo_request.model_dump(), owner_id=user.get('id'))
     db.add(todo_model)
     db.commit()
+    todo_id = todo_model.id
+    todo_model = db.query(Todos)\
+        .filter(Todos.id == todo_id)\
+        .filter(Todos.owner_id == user.get('id'))\
+        .first()  # Will always be one & first because its the PK
+    
+    if todo_model is not None: 
+        return todo_model
 
+    raise HTTPException(status_code=500, detail='New todo not found.')
 
 @router.put("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def read_all(user: user_dependency, db: db_dependency, todo_request: TodoRequest, todo_id: int = Path(gt=0)):
