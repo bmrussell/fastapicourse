@@ -1,0 +1,1 @@
+# NB: Set "python.testing.cwd": "TodoApp" in workspace config at .vscode/settings.json to point pytest at project

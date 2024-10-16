@@ -5,9 +5,8 @@ from passlib.context import CryptContext
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from database import SessionLocal
-from models import Todos
-
+from ..database import SessionLocal
+from ..models import Todos
 from .auth import bcrypt_context, get_current_user
 
 router = APIRouter()

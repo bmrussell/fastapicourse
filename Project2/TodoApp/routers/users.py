@@ -4,9 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, Path, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from database import SessionLocal
-from models import Users
-
+from ..database import SessionLocal
+from ..models import Users
 from .auth import bcrypt_context, get_current_user
 
 router = APIRouter()
