@@ -28,6 +28,12 @@
             "database": "todo-db",
             "username": "postgres",
             "password": "adminadmin"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "todos-test",
+            "database": "${workspaceFolder:Project2}/TodoApp/todos-test.db"
         }
     ],
     "python.testing.pytestArgs": [
