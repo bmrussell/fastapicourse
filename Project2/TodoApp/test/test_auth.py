@@ -1,5 +1,5 @@
 import pytest
-import pytest_asyncio
+from fastapi import HTTPException, status
 from jose import jwt
 
 from ..database import get_db
@@ -50,3 +50,14 @@ async def test_get_current_user_token_valid():
     
     user = await get_current_user(token=token)
     assert user == {'username': 'spiny', 'id': 1, 'user_role': 'admin'}
+    
+@pytest.mark.asyncio
+async def test_get_current_user_missing_payload():
+    encode = {'role': 'user'}
+    token = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+    
+    with pytest.raises(HTTPException) as ex:
+        await get_current_user(token=token)
+    
+    assert ex.value.status_code == status.HTTP_401_UNAUTHORIZED
+    assert ex.value.detail == 'Invalid user'
