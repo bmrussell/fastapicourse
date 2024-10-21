@@ -1,9 +1,9 @@
 from fastapi import status
 
+from ..database import get_db
 from ..main import app
 from ..models import Todos
 from ..routers.auth import get_current_user
-from ..routers.todos import get_current_user, get_db
 from .utils import *
 
 # Change the dependency injection to use the database and user from this module
@@ -11,22 +11,23 @@ app.dependency_overrides[get_db] = override_get_db
 app.dependency_overrides[get_current_user] = override_get_current_user
 
 
-def test_read_all_authenticated(test_todo: Todos):
+def test_todos_read_all_authenticated(test_todo: Todos):
     response = client.get("/todos")
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == [{'priority': 5, 'id': 1, 'complete': False, 'description': 'Learn every day', 'title': 'Learn to code', 'owner_id': 1}]
 
-def test_read_one_authenticated(test_todo: Todos):
+def test_todos_read_one_authenticated(test_todo: Todos):
     response = client.get("/todos/1")
     assert response.status_code == status.HTTP_200_OK
+    print(response.json())
     assert response.json() == {'priority': 5, 'id': 1, 'complete': False, 'description': 'Learn every day', 'title': 'Learn to code', 'owner_id': 1}
 
-def test_read_one_not_found_authenticated(test_todo: Todos):
+def test_todos_read_one_not_found_authenticated(test_todo: Todos):
     response = client.get("/todos/999")
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json() == {'detail': 'Todo not found.'}
 
-def test_create_authenticated(test_todo: Todos):
+def test_todos_create_authenticated(test_todo: Todos):
     request_data = {
         'title': 'New Todo',
         'description': 'New todo description',
@@ -43,7 +44,7 @@ def test_create_authenticated(test_todo: Todos):
     assert model.priority == request_data.get('priority')
     assert model.complete == request_data.get('complete')
     
-def test_update_authenticated(test_todo: Todos):
+def test_todos_update_authenticated(test_todo: Todos):
     request_data = {
         'title': 'Updated title',
         'description': 'Updated description',
@@ -60,7 +61,7 @@ def test_update_authenticated(test_todo: Todos):
     assert model.priority == request_data.get('priority')
     assert model.complete == request_data.get('complete')
     
-def test_update_not_found_authenticated(test_todo: Todos):
+def test_todos_update_not_found_authenticated(test_todo: Todos):
     request_data = {
         'title': 'Updated title',
         'description': 'Updated description',
@@ -72,7 +73,7 @@ def test_update_not_found_authenticated(test_todo: Todos):
     assert response.json() == {'detail' : 'Todo not found.'}
     
     
-def test_delete_authenticated(test_todo: Todos):
+def test_todos_delete_authenticated(test_todo: Todos):
     response = client.delete('/todos/1')
     assert response.status_code == status.HTTP_204_NO_CONTENT
     
@@ -81,7 +82,7 @@ def test_delete_authenticated(test_todo: Todos):
     assert model is None
 
 
-def test_delete_not_found_authenticated(test_todo: Todos):
+def test_todos_delete_not_found_authenticated(test_todo: Todos):
     response = client.delete('/todos/999')
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json() == {'detail' : 'Todo not found.'}

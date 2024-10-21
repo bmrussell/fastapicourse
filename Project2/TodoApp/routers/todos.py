@@ -4,20 +4,14 @@ from fastapi import APIRouter, Depends, HTTPException, Path, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from ..database import SessionLocal
+from ..database import get_db
 from ..models import Todos
 from .auth import get_current_user
 
 router = APIRouter()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
 
-        yield db        # Returns first then continues to close connection.
-    finally:
-        db.close()
 
 
 # Dependency injection, calls get_db & get_current_user

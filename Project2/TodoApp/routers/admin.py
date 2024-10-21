@@ -5,26 +5,17 @@ from passlib.context import CryptContext
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from ..database import SessionLocal
+from ..database import get_db
 from ..models import Todos
 from .auth import bcrypt_context, get_current_user
 
 router = APIRouter()
 router = APIRouter(prefix='/admin', tags=['admin'])
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db        # Returns first then continues to close connection.
-    finally:
-        db.close()
-
 
 # Dependency injection, calls get_db & get_current_user
 db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
-
-
 
 
 @router.get("/todo", status_code=status.HTTP_200_OK)

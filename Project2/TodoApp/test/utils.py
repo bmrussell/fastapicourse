@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import StaticPool, create_engine, text
@@ -5,7 +7,8 @@ from sqlalchemy.orm import sessionmaker
 
 from ..database import Base
 from ..main import app
-from ..models import Todos
+from ..models import Todos, Users
+from ..routers.auth import bcrypt_context, create_access_token
 
 SQLALCHEMY_DATABSE_URL = 'sqlite:///./todos-test.db'
 
@@ -28,7 +31,13 @@ def override_get_db():
 
 
 def override_get_current_user():
-    return {'username': 'spiny', 'id': 1, 'user_role': 'admin', 'phone_number': ''}
+    return {'id': 1,
+            'first_name': "spiny",
+            'last_name': "norman",
+            'role': "admin",
+            'phone_number': "0118 999 881 999 119 725 3",
+            'email': "spiny@eed.com",
+            'is_active': True}
 
 
 client = TestClient(app)
@@ -47,11 +56,51 @@ def test_todo():
     db = TestingSessionLocal()
     db.add(todo)
     db.commit()
-    
+
     # Yield returns todo to the calling test
     yield todo
     # When the calling test terminates the rest is executed
-    
+
     with engine.connect() as connection:
         connection.execute(text("DELETE FROM todos"))
+        connection.commit()
+
+
+@pytest.fixture
+def test_user():
+    
+    # Make sure DB is clean of test users
+    with engine.connect() as connection:
+        connection.execute(text("DELETE FROM users"))
+        connection.commit()
+    
+    # Create a test user
+    hash = bcrypt_context.hash("testpassword")
+    user = Users(
+        id=1,
+        email="spiny@eed.com",
+        username="spiny",
+        first_name="spiny",
+        last_name="norman",
+        password_hash=hash,
+        is_active=True,
+        role="admin",
+        phone_number="0118 999 881 999 119 725 3"
+    )
+
+    db = TestingSessionLocal()
+    db.add(user)
+    db.commit()
+    
+    # Authenticate the test user
+    token = create_access_token("spiny", 1, "admin", timedelta(minutes=20))
+    headers = {"Authorization": f"Bearer {token}"}
+    client.headers.update(headers)
+    
+    # Yield returns todo to the calling test
+    yield user
+    # When the calling test terminates the rest is executed
+
+    with engine.connect() as connection:
+        connection.execute(text("DELETE FROM users"))
         connection.commit()

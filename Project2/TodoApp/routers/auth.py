@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette import status
 
-from ..database import SessionLocal
+from ..database import get_db
 from ..models import Users
 
 router = APIRouter(prefix='/auth', tags=['auth'])
@@ -23,16 +23,6 @@ ALGORITHM = 'HS256'
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token') # parameter is the url that the client will send to the app
 
-
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        
-        yield db        # Returns first then continues to close connection.
-    finally:
-        db.close()
 
 
 def authenticate_user(username: str, password: str, db):
@@ -51,13 +41,6 @@ def create_access_token(username: str, user_id: int, role: str, expires_delta: t
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
-
-
-
-
-
-
-
 
 
     
