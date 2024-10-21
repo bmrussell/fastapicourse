@@ -112,17 +112,24 @@ async def update_user(user: user_dependency, db: db_dependency, updated_user: Up
         .filter(Users.id == user.get('id'))\
         .first() 
     
-    if user_model.role != "admin" and user_model != user_id:
-        raise HTTPException(status_code=400, detail='Only admins can update other users.')
-        
     if updated_user.password is not None:
-        if (user_model.role != "admin" and (updated_user.old_password is None or updated_user.old_password == "" or updated_user.password == "") ):
-            raise HTTPException(status_code=400, detail='Must supply old and new password.')
-    
-        if user_model.role != "admin":
-            if not bcrypt_context.verify(updated_user.old_password, user_model.password_hash):
-                raise HTTPException(status_code=400, detail='Old password does not match.')
+        # Password change
+        if user_model.role != "admin":                                                                                      # Regular user
+            if user_model.id != user_id:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Only admins can update other users.') # Regular users can't change others passwords
+            
+            if updated_user.old_password is None or updated_user.password is  None:                                         # Must supply both old and new passwords
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Must supply old and new password.')
         
+            if not bcrypt_context.verify(updated_user.old_password, user_model.password_hash):                              # Old & new passwords must match
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Old password does not match.')        
+
+        else:
+            if updated_user.old_password is not None and updated_user.password is not None:
+                if not bcrypt_context.verify(updated_user.old_password, user_model.password_hash):                          # Old & new passwords must match
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Old password does not match.')        
+                  
+        # Either admin or satified the above rules.                        
         user_model.password_hash = bcrypt_context.hash(updated_user.password)
 
     if updated_user.first_name is not None: user_model.first_name = updated_user.first_name
