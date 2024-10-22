@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from .database import engine
@@ -12,6 +13,8 @@ app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
 templates = Jinja2Templates(directory="TodoApp/templates")
+
+app.mount("/static", StaticFiles(directory="TodoApp/static"), name="static")
 
 @app.get("/")
 def test(request: Request):
