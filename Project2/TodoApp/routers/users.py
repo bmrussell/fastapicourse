@@ -50,10 +50,12 @@ class UpdateUserRequest(BaseModel):
     is_active: bool = Field(None)
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_user(user: user_dependency, db: db_dependency, create_user_reqest: CreateUserRequest):
-    if user is None or user.get('user_role') != 'admin':
-        raise HTTPException(status_code=401, detail='Not authenticated.')
-
+async def create_user(db: db_dependency, create_user_reqest: CreateUserRequest):
+    
+    # Function declaration does not include
+    #   user: user_dependency, 
+    # To make it unauthenticated.
+    
     create_user_model = Users(
         username=create_user_reqest.username,
         email=create_user_reqest.email,

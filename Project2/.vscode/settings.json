@@ -34,6 +34,17 @@
             "driver": "SQLite",
             "name": "todos-test",
             "database": "${workspaceFolder:Project2}/TodoApp/todos-test.db"
+        },
+        {
+            "previewLimit": 50,
+            "server": "htpc.lan",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "ttrss",
+            "group": "ttrss",
+            "database": "postgres",
+            "username": "postgres",
+            "password": "__postgres__"
         }
     ],
     "python.testing.pytestArgs": [

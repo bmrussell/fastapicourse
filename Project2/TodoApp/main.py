@@ -4,8 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from .database import engine
-from .models import Base
+from .database import Base, engine
 from .routers import admin, auth, todos, users
 
 app = FastAPI()
