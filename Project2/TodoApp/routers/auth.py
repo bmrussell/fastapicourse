@@ -24,7 +24,9 @@ ALGORITHM = 'HS256'
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token') # parameter is the url that the client will send to the app
 
-
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 def authenticate_user(username: str, password: str, db):
     user : Users = db.query(Users).filter(Users.username == username).first()    
@@ -79,7 +81,7 @@ def render_register_page(request: Request):
 @router.post("/token")
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
     user = authenticate_user(form_data.username, form_data.password, db)
-    if user == None:
+    if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid user')
     
     token = create_access_token(user.username, user.id, user.role, timedelta(minutes=20))
