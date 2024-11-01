@@ -98,7 +98,7 @@ if (editTodoForm) {
                 throw new Error('Authentication token not found');
             }
 
-            const response = await fetch(`/todos/todo/${todoId}`, {
+            const response = await fetch(`/todos/${todoId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
